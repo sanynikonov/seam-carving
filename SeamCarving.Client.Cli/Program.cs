@@ -8,14 +8,17 @@ namespace SeamCarving.Client.Cli
     class Program
     {
         private const string FullPath = @"C:\Users\nikon\Desktop\Test";
-        private const string Folder = "Pictures";
-        private const string Picture = "Жека.jpg";
+        private const string Folder = "VadymCrazy";
+        private const string Picture = "Vadym1.jpg";
 
         static void Main(string[] args)
         {
-            int pictures = 200;
+            int pictures = 20;
 
             using var file = Image.FromFile(Path.Combine(FullPath, Picture));
+
+			var picturesWidth = file.Width - pictures / 2;
+			var picturesHeight = file.Height - pictures / 2;
 
             Bitmap bitmap = new Bitmap(file);
             Bitmap source;
@@ -43,6 +46,7 @@ namespace SeamCarving.Client.Cli
             horizontalfinder.SetNext(horizontalremoveProcessor);
 
             var pixels = BitmapConverter.ToColorsMatrix(bitmap);
+			bitmap.Dispose();
             ProcessingContext context;
 
             for (int i = 0; i < pictures; i++)
@@ -69,18 +73,16 @@ namespace SeamCarving.Client.Cli
                     horizontalenergyProcessor.Process(context);
                 }
 
+                pixels = context.Result;
+
                 var fileName = $"{i}.jpg";
 
-                bitmap = BitmapConverter.FromColorsMatrix(context.Result);
+                using var resultBitmap = BitmapConverter.FromColorsMatrix(context.Result);
+                using var finalBitmap = new Bitmap(resultBitmap, new Size(picturesWidth, picturesHeight));
 
-                bitmap.Save(Path.Combine(FullPath, Folder, fileName));
+                finalBitmap.Save(Path.Combine(FullPath, Folder, fileName));
 
                 Console.WriteLine($"{fileName} was succesfully saved.");
-
-                using var resultBitmap = BitmapConverter.FromColorsMatrix(context.Result);
-                using var extendedBitmap = new Bitmap(resultBitmap, new Size(file.Width, file.Height));
-
-                pixels = BitmapConverter.ToColorsMatrix(extendedBitmap);
             }
         }
     }
