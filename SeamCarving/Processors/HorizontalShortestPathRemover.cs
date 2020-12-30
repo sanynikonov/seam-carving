@@ -20,9 +20,9 @@ namespace SeamCarving.Processors
             int currentX = 0;
             int currentY = 0;
 
-            for (int x = 0; x < image.Height(); x++)
+            for (int x = 0; x < image.Width(); x++)
             {                
-                for (int y = 0; y < image.Width(); y++)
+                for (int y = 0; y < image.Height(); y++)
                 {
                     if (context.PointsOfShortestPath.Contains(new Point(x, y)))
                     {
