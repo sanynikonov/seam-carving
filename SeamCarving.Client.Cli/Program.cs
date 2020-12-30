@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SeamCarving.Processors;
+using System;
 using System.Drawing;
 using System.IO;
 
@@ -12,36 +13,58 @@ namespace SeamCarving.Client.Cli
 
         static void Main(string[] args)
         {
-            int pictures = 10;
+            int pictures = 100;
 
             using var file = Image.FromFile(Path.Combine(FullPath, Picture));
 
             Bitmap bitmap = new Bitmap(file);
             Bitmap source;
 
-            var energyProcessor = new PixelEnergyProcessor();
-            var pathProcessor = new PixelPathProcessor();
-            var finder = new ShortestPathFinder();
-            var removeProcessor = new RemoveShortestPathProcessor();
+            //var energyProcessor = new PixelEnergyProcessor();
+            //var pathProcessor = new PixelPathProcessor();
+            //var finder = new ShortestPathFinder();
+            //var removeProcessor = new RemoveShortestPathProcessor();
+            var energyProcessor = new PixelEnergyCalculator();
+            var pathProcessor = new PixelPathsProcessor();
+            var finder = new Processors.ShortestPathFinder();
+            var removeProcessor = new ShortestPathRemover();
+
+            energyProcessor.SetNext(pathProcessor);
+            pathProcessor.SetNext(finder);
+            finder.SetNext(removeProcessor);
+
+            var pixels = BitmapConverter.ToColorsMatrix(bitmap);
+            ProcessingContext context;
 
             for (int i = 0; i < pictures; i++)
             {
-                source = new Bitmap(bitmap, new Size(file.Width, file.Height));
+                context = new ProcessingContext { Pixels = pixels };
 
-                bitmap = energyProcessor.Process(source);
+                //source = new Bitmap(bitmap, new Size(file.Width, file.Height));
 
-                bitmap = pathProcessor.Process(bitmap);
+                //bitmap = energyProcessor.Process(source);
 
-                var points = finder.FindShortestPath(bitmap);
-                removeProcessor.PointsOfShortestPath = points;
+                //bitmap = pathProcessor.Process(bitmap);
 
-                bitmap = removeProcessor.Process(source);
+                //var points = finder.FindShortestPath(bitmap);
+                //removeProcessor.PointsOfShortestPath = points;
+
+                //bitmap = removeProcessor.Process(source);
+
+                energyProcessor.Process(context);
 
                 var fileName = $"{i}.png";
+
+                bitmap = BitmapConverter.FromColorsMatrix(context.Result);
 
                 bitmap.Save(Path.Combine(FullPath, Folder, fileName));
 
                 Console.WriteLine($"{fileName} was succesfully saved.");
+
+                using var resultBitmap = BitmapConverter.FromColorsMatrix(context.Result);
+                using var extendedBitmap = new Bitmap(resultBitmap, new Size(file.Width, file.Height));
+
+                pixels = BitmapConverter.ToColorsMatrix(extendedBitmap);
             }
         }
     }
