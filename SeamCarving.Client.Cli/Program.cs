@@ -9,11 +9,11 @@ namespace SeamCarving.Client.Cli
     {
         private const string FullPath = @"C:\Users\nikon\Desktop\Test";
         private const string Folder = "Pictures";
-        private const string Picture = "Жека.png";
+        private const string Picture = "Жека.jpg";
 
         static void Main(string[] args)
         {
-            int pictures = 100;
+            int pictures = 200;
 
             using var file = Image.FromFile(Path.Combine(FullPath, Picture));
 
@@ -24,6 +24,11 @@ namespace SeamCarving.Client.Cli
             //var pathProcessor = new PixelPathProcessor();
             //var finder = new ShortestPathFinder();
             //var removeProcessor = new RemoveShortestPathProcessor();
+            var horizontalenergyProcessor = new PixelEnergyCalculator();
+            var horizontalpathProcessor = new HorizontalPixelPathsProcessor();
+            var horizontalfinder = new HorizontalShortestPathFinder();
+            var horizontalremoveProcessor = new HorizontalShortestPathRemover();
+            
             var energyProcessor = new PixelEnergyCalculator();
             var pathProcessor = new PixelPathsProcessor();
             var finder = new Processors.ShortestPathFinder();
@@ -32,6 +37,10 @@ namespace SeamCarving.Client.Cli
             energyProcessor.SetNext(pathProcessor);
             pathProcessor.SetNext(finder);
             finder.SetNext(removeProcessor);
+
+            horizontalenergyProcessor.SetNext(horizontalpathProcessor);
+            horizontalpathProcessor.SetNext(horizontalfinder);
+            horizontalfinder.SetNext(horizontalremoveProcessor);
 
             var pixels = BitmapConverter.ToColorsMatrix(bitmap);
             ProcessingContext context;
@@ -51,9 +60,16 @@ namespace SeamCarving.Client.Cli
 
                 //bitmap = removeProcessor.Process(source);
 
-                energyProcessor.Process(context);
+                if (i % 2 == 0)
+                {
+                    energyProcessor.Process(context);
+                }
+                else
+                {
+                    horizontalenergyProcessor.Process(context);
+                }
 
-                var fileName = $"{i}.png";
+                var fileName = $"{i}.jpg";
 
                 bitmap = BitmapConverter.FromColorsMatrix(context.Result);
 
