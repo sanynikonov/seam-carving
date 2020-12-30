@@ -10,7 +10,7 @@ namespace SeamCarving.Processors
     {
         public override void Process(ProcessingContext context)
         {
-            var pixels = context.Result ?? context.Pixels;
+            var pixels = context.Result ?? context.Source;
 
             var result = new Color[pixels.Height(), pixels.Width()];
 

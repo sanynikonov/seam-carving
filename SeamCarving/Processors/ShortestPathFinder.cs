@@ -10,7 +10,7 @@ namespace SeamCarving.Processors
     {
         public override void Process(ProcessingContext context)
         {
-            var image = context.Result ?? context.Pixels;
+            var image = context.Result ?? context.Source;
 
             var result = new List<Point>();
 

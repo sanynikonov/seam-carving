@@ -38,7 +38,7 @@ namespace SeamCarving.Client.Cli
 
             for (int i = 0; i < pictures; i++)
             {
-                context = new ProcessingContext { Pixels = pixels };
+                context = new ProcessingContext { Source = pixels };
 
                 //source = new Bitmap(bitmap, new Size(file.Width, file.Height));
 

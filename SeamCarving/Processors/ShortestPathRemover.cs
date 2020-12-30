@@ -13,7 +13,7 @@ namespace SeamCarving.Processors
             if (context.PointsOfShortestPath == null)
                 throw new InvalidOperationException("Unable to remove shortest path without provided coodinates.");
 
-            var image = context.Pixels;
+            var image = context.Source;
 
             var result = new Color[image.Height(), image.Width() - 1];
 

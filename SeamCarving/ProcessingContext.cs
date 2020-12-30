@@ -5,7 +5,7 @@ namespace SeamCarving
 {
     public class ProcessingContext
     {
-        public Color[,] Pixels { get; set; }
+        public Color[,] Source { get; set; }
         public IEnumerable<Point> PointsOfShortestPath { get; set; }
         public Color[,] Result { get; set; }
     }
