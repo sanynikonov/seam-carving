@@ -1,6 +1,7 @@
 ﻿using SeamCarving.Processors;
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 
 namespace SeamCarving.Client.Cli
@@ -13,7 +14,27 @@ namespace SeamCarving.Client.Cli
 
         static void Main(string[] args)
         {
-            int pictures = 20;
+            int pictures = 200;
+
+            var horizontalenergyProcessor = new PixelEnergyCalculator();
+            var horizontalpathProcessor = new HorizontalPixelPathsProcessor();
+            var horizontalfinder = new HorizontalShortestPathFinder();
+            var horizontalremoveProcessor = new HorizontalShortestPathRemover();
+
+            var energyProcessor = new PixelEnergyCalculator();
+            var pathProcessor = new PixelPathsProcessor();
+            var finder = new Processors.ShortestPathFinder();
+            var removeProcessor = new ShortestPathRemover();
+
+            energyProcessor.SetNext(pathProcessor);
+            pathProcessor.SetNext(finder);
+            finder.SetNext(removeProcessor);
+
+            horizontalenergyProcessor.SetNext(horizontalpathProcessor);
+            horizontalpathProcessor.SetNext(horizontalfinder);
+            horizontalfinder.SetNext(horizontalremoveProcessor);
+
+            var startTime = DateTime.Now;
 
             using var file = Image.FromFile(Path.Combine(FullPath, Picture));
 
@@ -27,23 +48,6 @@ namespace SeamCarving.Client.Cli
             //var pathProcessor = new PixelPathProcessor();
             //var finder = new ShortestPathFinder();
             //var removeProcessor = new RemoveShortestPathProcessor();
-            var horizontalenergyProcessor = new PixelEnergyCalculator();
-            var horizontalpathProcessor = new HorizontalPixelPathsProcessor();
-            var horizontalfinder = new HorizontalShortestPathFinder();
-            var horizontalremoveProcessor = new HorizontalShortestPathRemover();
-            
-            var energyProcessor = new PixelEnergyCalculator();
-            var pathProcessor = new PixelPathsProcessor();
-            var finder = new Processors.ShortestPathFinder();
-            var removeProcessor = new ShortestPathRemover();
-
-            energyProcessor.SetNext(pathProcessor);
-            pathProcessor.SetNext(finder);
-            finder.SetNext(removeProcessor);
-
-            horizontalenergyProcessor.SetNext(horizontalpathProcessor);
-            horizontalpathProcessor.SetNext(horizontalfinder);
-            horizontalfinder.SetNext(horizontalremoveProcessor);
 
             var pixels = BitmapConverter.ToColorsMatrix(bitmap);
 			bitmap.Dispose();
@@ -80,10 +84,15 @@ namespace SeamCarving.Client.Cli
                 using var resultBitmap = BitmapConverter.FromColorsMatrix(context.Result);
                 using var finalBitmap = new Bitmap(resultBitmap, new Size(picturesWidth, picturesHeight));
 
-                finalBitmap.Save(Path.Combine(FullPath, Folder, fileName));
+                finalBitmap.Save(Path.Combine(FullPath, Folder, fileName), ImageFormat.Jpeg);
 
                 Console.WriteLine($"{fileName} was succesfully saved.");
             }
+
+            var endTime = DateTime.Now;
+            var difference = endTime - startTime;
+
+            Console.WriteLine($"Processed in {difference.Minutes} m {difference.Seconds} s.");
         }
     }
 }
