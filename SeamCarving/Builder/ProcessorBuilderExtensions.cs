@@ -39,6 +39,11 @@ namespace SeamCarving.Builder
             return builder.SetProcessor(shortestPathRemover);
         }
 
+        public static IProcessorBuilder SetJpegImageSaver(this IProcessorBuilder builder, string destination, int width, int height)
+        {
+            return builder.SetProcessor(new JpegImageSaver(destination, width, height));
+        }
+
         public static IProcessorBuilder SetProcessor(this IProcessorBuilder builder, Action<ProcessingContext> processingAction)
         {
             return builder.SetProcessor(new GenericProcessor(processingAction));
