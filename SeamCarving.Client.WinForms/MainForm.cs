@@ -14,25 +14,15 @@ namespace SeamCarving.Client.WinForms
 {
     public partial class MainForm : Form
     {
-        private IProcessorBuilder _builder;
         private IProcessor _mainProcessor;
 
         public MainForm()
         {
             InitializeComponent();
-            _builder = new ProcessorBuilder();
-            _mainProcessor = _builder
-                .SetPixelEnergyCalculator()
-                .SetProcessor(context =>
-                    gradientPictureBox.Image = BitmapConverter.FromColorsMatrix(context.Result))
-                .SetPixelPathsProcessor(vertical: true)
-                .SetProcessor(context =>
-                    pixelPathPictureBox.Image = BitmapConverter.FromColorsMatrix(context.Result))
-                .SetShortestPathFinder(vertical: true)
-                .SetProcessor(MarkShortestPathAsRed)
-                .SetProcessor(context =>
-                    shortestPathPictureBox.Image = BitmapConverter.FromColorsMatrix(context.Result))
-                .Build();
+
+            var builder = new ProcessorBuilder();
+            ConfigureConveyor(builder);
+            _mainProcessor = builder.Build();
         }
 
         private void ProcessButton_Click(object sender, EventArgs e)
@@ -42,6 +32,31 @@ namespace SeamCarving.Client.WinForms
             var context = new ProcessingContext { Source = BitmapConverter.ToColorsMatrix(new Bitmap(source)) };
 
             _mainProcessor.Process(context);
+        }
+
+        private void ConfigureConveyor(IProcessorBuilder conveyor)
+        {
+            conveyor.SetPixelEnergyCalculator();
+
+            conveyor.SetProcessor(
+                context => SetImageToPictureBox(gradientPictureBox, context));
+
+            conveyor.SetPixelPathsProcessor(vertical: true);
+
+            conveyor.SetProcessor(
+                context => SetImageToPictureBox(pixelPathPictureBox, context));
+
+            conveyor.SetShortestPathFinder(vertical: true);
+
+            conveyor.SetProcessor(MarkShortestPathAsRed);
+
+            conveyor.SetProcessor(
+                context => SetImageToPictureBox(shortestPathPictureBox, context));
+        }
+
+        private void SetImageToPictureBox(PictureBox box, ProcessingContext context)
+        {
+            box.Image = BitmapConverter.FromColorsMatrix(context.Result);
         }
 
         private static void MarkShortestPathAsRed(ProcessingContext context)
