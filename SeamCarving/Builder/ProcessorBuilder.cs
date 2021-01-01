@@ -12,12 +12,13 @@ namespace SeamCarving.Builder
 
         public IProcessor Build()
         {
-            return _lastProcessor;
+            return _firstProcessor;
         }
 
         public IProcessorBuilder Reset()
         {
             _firstProcessor = null;
+            _lastProcessor = null;
             return this;
         }
 
