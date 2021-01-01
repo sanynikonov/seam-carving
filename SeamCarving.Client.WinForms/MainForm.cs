@@ -85,6 +85,8 @@ namespace SeamCarving.Client.WinForms
         {
             sourcePictureBox.Image.Dispose();
             gradientPictureBox.Image.Dispose();
+            pixelPathPictureBox.Image.Dispose();
+            shortestPathPictureBox.Image.Dispose();
         }
     }
 }
