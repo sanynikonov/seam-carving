@@ -14,34 +14,37 @@ namespace SeamCarving.Builder
 
         public static IProcessorBuilder SetPixelPathsProcessor(this IProcessorBuilder builder, bool vertical)
         {
-            var pixelPathsProcessor = vertical
-                ? new PixelPathsProcessor() as IProcessor
-                : new HorizontalPixelPathsProcessor();
+            IProcessor pixelPathsProcessor;
+            if (vertical)
+                pixelPathsProcessor = new PixelPathsProcessor();
+            else pixelPathsProcessor = new HorizontalPixelPathsProcessor();
 
             return builder.SetProcessor(pixelPathsProcessor);
         }
 
         public static IProcessorBuilder SetShortestPathFinder(this IProcessorBuilder builder, bool vertical)
         {
-            IProcessor shortestPathFinder = vertical
-                ? new ShortestPathFinder() as IProcessor
-                : new HorizontalShortestPathFinder();
+            IProcessor shortestPathFinder;
+            if (vertical)
+                shortestPathFinder = new Processors.ShortestPathFinder();
+            else shortestPathFinder = new HorizontalShortestPathFinder();
 
             return builder.SetProcessor(shortestPathFinder);
         }
 
         public static IProcessorBuilder SetShortestPathRemover(this IProcessorBuilder builder, bool vertical)
         {
-            IProcessor shortestPathRemover = vertical
-                ? new ShortestPathRemover() as IProcessor
-                : new HorizontalShortestPathRemover();
+            IProcessor shortestPathRemover;
+            if (vertical)
+                shortestPathRemover = new ShortestPathRemover();
+            else shortestPathRemover = new HorizontalShortestPathRemover();
 
             return builder.SetProcessor(shortestPathRemover);
         }
 
-        public static IProcessorBuilder SetJpegImageSaver(this IProcessorBuilder builder, string destination, int width, int height)
+        public static IProcessorBuilder SetJpegImageSaver(this IProcessorBuilder builder, int width, int height)
         {
-            return builder.SetProcessor(new JpegImageSaver(destination, width, height));
+            return builder.SetProcessor(new JpegImageSaver(width, height));
         }
 
         public static IProcessorBuilder SetProcessor(this IProcessorBuilder builder, Action<ProcessingContext> processingAction)
