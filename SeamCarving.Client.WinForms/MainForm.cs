@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SeamCarving.Builder;
+using SeamCarving.Processors;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,72 +14,62 @@ namespace SeamCarving.Client.WinForms
 {
     public partial class MainForm : Form
     {
-        private PixelEnergyProcessor processor = new PixelEnergyProcessor();
-        private PixelPathProcessor pathProcessor = new PixelPathProcessor();
-        private MarkShortestPathRedProcessor shortestPathMarker = new MarkShortestPathRedProcessor();
-        private RemoveShortestPathProcessor removeShortestPathProcessor = new RemoveShortestPathProcessor();
-
-        private ShortestPathFinder shortestPathFinder = new ShortestPathFinder();
-        Point[] points;
+        private IProcessorBuilder _builder;
+        private IProcessor _mainProcessor;
 
         public MainForm()
         {
             InitializeComponent();
-            //points = Enumerable.Range(0, 512).Select(y => new Point(0, y)).ToArray();
-            //removeShortestPathProcessor.PointsOfShortestPath = points;
+            _builder = new ProcessorBuilder();
+            _mainProcessor = _builder
+                .SetPixelEnergyCalculator()
+                .SetProcessor(context =>
+                    gradientPictureBox.Image = BitmapConverter.FromColorsMatrix(context.Result))
+                .SetPixelPathsProcessor(vertical: true)
+                .SetProcessor(context =>
+                    pixelPathPictureBox.Image = BitmapConverter.FromColorsMatrix(context.Result))
+                .SetShortestPathFinder(vertical: true)
+                .SetProcessor(MarkShortestPathAsRed)
+                .SetProcessor(context =>
+                    shortestPathPictureBox.Image = BitmapConverter.FromColorsMatrix(context.Result))
+                .Build();
         }
 
         private void ProcessButton_Click(object sender, EventArgs e)
         {
             var source = sourcePictureBox.Image;
 
-            var result = processor.Process(new Bitmap(source));
+            var context = new ProcessingContext { Source = BitmapConverter.ToColorsMatrix(new Bitmap(source)) };
 
-            gradientPictureBox.Image = result;
+            _mainProcessor.Process(context);
+        }
 
-            result = pathProcessor.Process(result);
+        private static void MarkShortestPathAsRed(ProcessingContext context)
+        {
+            var source = context.Source;
+            var result = new Color[source.Height(), source.Width()];
 
-            pixelPathPictureBox.Image = result;
+            for (int y = 0; y < context.Result.Height(); y++)
+            {
+                for (int x = 0; x < context.Result.Width(); x++)
+                {
+                    if (context.PointsOfShortestPath.Contains(new Point(x, y)))
+                    {
+                        result[y, x] = Color.Red;
+                        continue;
+                    }
 
-            var coordinates = shortestPathFinder.FindShortestPath(result);
-            shortestPathMarker.PointsOfShortestPath = coordinates;
-            removeShortestPathProcessor.PointsOfShortestPath = coordinates;
+                    result[y, x] = source[y, x];
+                }
+            }
 
-            result = shortestPathMarker.Process(sourcePictureBox.Image as Bitmap);
-
-            shortestPathPictureBox.Image = result;
-
-            sourcePictureBox.Image = removeShortestPathProcessor.Process(result);
+            context.Result = result;
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             sourcePictureBox.Image.Dispose();
             gradientPictureBox.Image.Dispose();
-        }
-
-        private void ProcessNextButton_Click(object sender, EventArgs e)
-        {
-            var source = sourcePictureBox.Image;
-
-            removalPictureBox.Image = removeShortestPathProcessor.Process(preRemovalPictureBox.Image as Bitmap);
-            
-            var result = processor.Process(new Bitmap(source));
-
-            result = pathProcessor.Process(result);
-
-            var coordinates = shortestPathFinder.FindShortestPath(result);
-            shortestPathMarker.PointsOfShortestPath = coordinates;
-            removeShortestPathProcessor.PointsOfShortestPath = coordinates;
-
-            preRemovalPictureBox.Image = shortestPathMarker.Process(result);
-
-        }
-
-        private void Shit()
-        {
-            var result = removeShortestPathProcessor.Process(sourcePictureBox.Image as Bitmap);
-            sourcePictureBox.Image = result;
         }
     }
 }

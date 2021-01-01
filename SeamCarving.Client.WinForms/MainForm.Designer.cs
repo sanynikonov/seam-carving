@@ -111,7 +111,6 @@ namespace SeamCarving.Client.WinForms
             this.processNextButton.TabIndex = 7;
             this.processNextButton.Text = "Process Next";
             this.processNextButton.UseVisualStyleBackColor = true;
-            this.processNextButton.Click += new System.EventHandler(this.ProcessNextButton_Click);
             // 
             // removalPictureBox
             // 
