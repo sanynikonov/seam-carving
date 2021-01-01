@@ -17,30 +17,23 @@ namespace SeamCarving.Processors
 
             var result = new Color[image.Height(), image.Width() - 1];
 
-            var pixels = new Color[image.Height()][];
+            int currentX = 0;
+            int currentY = 0;
 
-            for (int y = 0; y < image.Height(); y++)
+            for (int y = 0; y < image.Width(); y++)
             {
-                pixels[y] = new Color[image.Width()];
-                for (int x = 0; x < image.Width(); x++)
+                for (int x = 0; x < image.Height(); x++)
                 {
-                    pixels[y][x] = image[y, x];
-                }
-            }
+                    if (context.PointsOfShortestPath.Contains(new Point(x, y)))
+                    {
+                        continue;
+                    }
 
-            var colors = pixels
-                .Select((arr, y) =>
-                    arr.Where((c, x) =>
-                        !context.PointsOfShortestPath.Contains(new Point(x, y)))
-                    .ToArray())
-                .ToArray();
-
-            for (int y = 0; y < result.Height(); y++)
-            {
-                for (int x = 0; x < result.Width(); x++)
-                {
-                    result[y, x] = colors[y][x];
+                    result[currentY, currentX++] = image[y, x];
                 }
+
+                currentX = 0;
+                currentY++;
             }
 
             context.Result = result;
