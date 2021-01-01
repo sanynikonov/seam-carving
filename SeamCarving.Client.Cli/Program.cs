@@ -1,4 +1,5 @@
-﻿using SeamCarving.Processors;
+﻿using SeamCarving.Builder;
+using SeamCarving.Processors;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -9,64 +10,46 @@ namespace SeamCarving.Client.Cli
     class Program
     {
         private const string FullPath = @"C:\Users\nikon\Desktop\Test";
-        private const string Folder = "VadymCrazy";
-        private const string Picture = "Vadym1.jpg";
+        private const string Folder = "Yarik";
+        private const string Picture = "Yarik.jpg";
 
         static void Main(string[] args)
         {
-            int pictures = 200;
+            int pictures = 300;
 
-            var horizontalenergyProcessor = new PixelEnergyCalculator();
-            var horizontalpathProcessor = new HorizontalPixelPathsProcessor();
-            var horizontalfinder = new HorizontalShortestPathFinder();
-            var horizontalremoveProcessor = new HorizontalShortestPathRemover();
-
-            var energyProcessor = new PixelEnergyCalculator();
-            var pathProcessor = new PixelPathsProcessor();
-            var finder = new Processors.ShortestPathFinder();
-            var removeProcessor = new ShortestPathRemover();
-
-            energyProcessor.SetNext(pathProcessor);
-            pathProcessor.SetNext(finder);
-            finder.SetNext(removeProcessor);
-
-            horizontalenergyProcessor.SetNext(horizontalpathProcessor);
-            horizontalpathProcessor.SetNext(horizontalfinder);
-            horizontalfinder.SetNext(horizontalremoveProcessor);
-
-            var startTime = DateTime.Now;
+            IProcessorBuilder builder = new ProcessorBuilder();
 
             using var file = Image.FromFile(Path.Combine(FullPath, Picture));
 
-			var picturesWidth = file.Width - pictures / 2;
-			var picturesHeight = file.Height - pictures / 2;
+            var picturesWidth = 300;
+            var picturesHeight = 300;
 
-            Bitmap bitmap = new Bitmap(file);
-            Bitmap source;
+            var horizontalenergyProcessor = builder
+                .SetDefaultHorizontalConveyor()
+                .SetJpegImageSaver(picturesWidth, picturesHeight)
+                .Build();
 
-            //var energyProcessor = new PixelEnergyProcessor();
-            //var pathProcessor = new PixelPathProcessor();
-            //var finder = new ShortestPathFinder();
-            //var removeProcessor = new RemoveShortestPathProcessor();
+            builder.Reset();
 
-            var pixels = BitmapConverter.ToColorsMatrix(bitmap);
+            var energyProcessor = builder
+                 .SetDefaultVerticalConveyor()
+                 .SetJpegImageSaver(picturesWidth, picturesHeight)
+                 .Build();
+
+            var startTime = DateTime.Now;
+
+            Bitmap bitmap = new Bitmap(file, new Size(450, 450));
+            var source = BitmapConverter.ToColorsMatrix(bitmap);
 			bitmap.Dispose();
+
             ProcessingContext context;
 
             for (int i = 0; i < pictures; i++)
             {
-                context = new ProcessingContext { Source = pixels };
+                var filename = $"{i}.jpg";
+                var fileDestination = Path.Combine(FullPath, Folder, filename);
 
-                //source = new Bitmap(bitmap, new Size(file.Width, file.Height));
-
-                //bitmap = energyProcessor.Process(source);
-
-                //bitmap = pathProcessor.Process(bitmap);
-
-                //var points = finder.FindShortestPath(bitmap);
-                //removeProcessor.PointsOfShortestPath = points;
-
-                //bitmap = removeProcessor.Process(source);
+                context = new ProcessingContext { Source = source, DestinationFileName = fileDestination };
 
                 if (i % 2 == 0)
                 {
@@ -77,16 +60,9 @@ namespace SeamCarving.Client.Cli
                     horizontalenergyProcessor.Process(context);
                 }
 
-                pixels = context.Result;
+                source = context.Result;
 
-                var fileName = $"{i}.jpg";
-
-                using var resultBitmap = BitmapConverter.FromColorsMatrix(context.Result);
-                using var finalBitmap = new Bitmap(resultBitmap, new Size(picturesWidth, picturesHeight));
-
-                finalBitmap.Save(Path.Combine(FullPath, Folder, fileName), ImageFormat.Jpeg);
-
-                Console.WriteLine($"{fileName} was succesfully saved.");
+                Console.WriteLine($"{filename} was succesfully saved.");
             }
 
             var endTime = DateTime.Now;
