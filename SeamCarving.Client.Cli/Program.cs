@@ -20,6 +20,9 @@ namespace SeamCarving.Client.Cli
             IProcessorBuilder builder = new ProcessorBuilder();
 
             using var file = Image.FromFile(Path.Combine(FullPath, Picture));
+            var bitmap = new Bitmap(file, new Size(450, 450));
+            var source = BitmapConverter.ToColorsMatrix(bitmap);
+            bitmap.Dispose();
 
             var picturesWidth = 300;
             var picturesHeight = 300;
@@ -36,18 +39,16 @@ namespace SeamCarving.Client.Cli
                  .SetJpegImageSaver(picturesWidth, picturesHeight)
                  .Build();
 
-            var startTime = DateTime.Now;
-
-            Bitmap bitmap = new Bitmap(file, new Size(450, 450));
-            var source = BitmapConverter.ToColorsMatrix(bitmap);
-			bitmap.Dispose();
-
             ProcessingContext context;
+            string filename;
+            string fileDestination;
+
+            var startTime = DateTime.Now;
 
             for (int i = 0; i < pictures; i++)
             {
-                var filename = $"{i}.jpg";
-                var fileDestination = Path.Combine(FullPath, Folder, filename);
+                filename = $"{i}.jpg";
+                fileDestination = Path.Combine(FullPath, Folder, filename);
 
                 context = new ProcessingContext { Source = source, DestinationFileName = fileDestination };
 
