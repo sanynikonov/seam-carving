@@ -35,16 +35,10 @@ namespace SeamCarving.Client.WinForms
             this.processButton = new System.Windows.Forms.Button();
             this.pixelPathPictureBox = new System.Windows.Forms.PictureBox();
             this.shortestPathPictureBox = new System.Windows.Forms.PictureBox();
-            this.preRemovalPictureBox = new System.Windows.Forms.PictureBox();
-            this.processNextButton = new System.Windows.Forms.Button();
-            this.removalPictureBox = new System.Windows.Forms.PictureBox();
-            this.removesCountTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.sourcePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gradientPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pixelPathPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.shortestPathPictureBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.preRemovalPictureBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.removalPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // sourcePictureBox
@@ -94,49 +88,11 @@ namespace SeamCarving.Client.WinForms
             this.shortestPathPictureBox.TabIndex = 4;
             this.shortestPathPictureBox.TabStop = false;
             // 
-            // preRemovalPictureBox
-            // 
-            this.preRemovalPictureBox.Location = new System.Drawing.Point(16, 375);
-            this.preRemovalPictureBox.Name = "preRemovalPictureBox";
-            this.preRemovalPictureBox.Size = new System.Drawing.Size(312, 312);
-            this.preRemovalPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.preRemovalPictureBox.TabIndex = 5;
-            this.preRemovalPictureBox.TabStop = false;
-            // 
-            // processNextButton
-            // 
-            this.processNextButton.Location = new System.Drawing.Point(705, 565);
-            this.processNextButton.Name = "processNextButton";
-            this.processNextButton.Size = new System.Drawing.Size(113, 37);
-            this.processNextButton.TabIndex = 7;
-            this.processNextButton.Text = "Process Next";
-            this.processNextButton.UseVisualStyleBackColor = true;
-            // 
-            // removalPictureBox
-            // 
-            this.removalPictureBox.Location = new System.Drawing.Point(334, 375);
-            this.removalPictureBox.Name = "removalPictureBox";
-            this.removalPictureBox.Size = new System.Drawing.Size(312, 312);
-            this.removalPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.removalPictureBox.TabIndex = 8;
-            this.removalPictureBox.TabStop = false;
-            // 
-            // removesCountTextBox
-            // 
-            this.removesCountTextBox.Location = new System.Drawing.Point(705, 476);
-            this.removesCountTextBox.Name = "removesCountTextBox";
-            this.removesCountTextBox.Size = new System.Drawing.Size(100, 23);
-            this.removesCountTextBox.TabIndex = 9;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1298, 699);
-            this.Controls.Add(this.removesCountTextBox);
-            this.Controls.Add(this.removalPictureBox);
-            this.Controls.Add(this.processNextButton);
-            this.Controls.Add(this.preRemovalPictureBox);
+            this.ClientSize = new System.Drawing.Size(1298, 381);
             this.Controls.Add(this.shortestPathPictureBox);
             this.Controls.Add(this.pixelPathPictureBox);
             this.Controls.Add(this.processButton);
@@ -149,10 +105,7 @@ namespace SeamCarving.Client.WinForms
             ((System.ComponentModel.ISupportInitialize)(this.gradientPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pixelPathPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.shortestPathPictureBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.preRemovalPictureBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.removalPictureBox)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -163,10 +116,6 @@ namespace SeamCarving.Client.WinForms
         private System.Windows.Forms.Button processButton;
         private System.Windows.Forms.PictureBox pixelPathPictureBox;
         private System.Windows.Forms.PictureBox shortestPathPictureBox;
-        private System.Windows.Forms.PictureBox preRemovalPictureBox;
-        private System.Windows.Forms.Button processNextButton;
-        private System.Windows.Forms.PictureBox removalPictureBox;
-        private System.Windows.Forms.TextBox removesCountTextBox;
     }
 }
 
