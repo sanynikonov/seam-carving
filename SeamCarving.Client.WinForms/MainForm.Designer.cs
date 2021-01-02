@@ -35,6 +35,8 @@ namespace SeamCarving.Client.WinForms
             this.processButton = new System.Windows.Forms.Button();
             this.pixelPathPictureBox = new System.Windows.Forms.PictureBox();
             this.shortestPathPictureBox = new System.Windows.Forms.PictureBox();
+            this.openSourceFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.uploadSourceButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.sourcePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gradientPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pixelPathPictureBox)).BeginInit();
@@ -88,11 +90,26 @@ namespace SeamCarving.Client.WinForms
             this.shortestPathPictureBox.TabIndex = 4;
             this.shortestPathPictureBox.TabStop = false;
             // 
+            // openSourceFileDialog
+            // 
+            this.openSourceFileDialog.FileName = "openFileDialog1";
+            // 
+            // uploadSourceButton
+            // 
+            this.uploadSourceButton.Location = new System.Drawing.Point(12, 332);
+            this.uploadSourceButton.Name = "uploadSourceButton";
+            this.uploadSourceButton.Size = new System.Drawing.Size(75, 26);
+            this.uploadSourceButton.TabIndex = 5;
+            this.uploadSourceButton.Text = "Upload...";
+            this.uploadSourceButton.UseVisualStyleBackColor = true;
+            this.uploadSourceButton.Click += new System.EventHandler(this.UploadSourceButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1298, 381);
+            this.Controls.Add(this.uploadSourceButton);
             this.Controls.Add(this.shortestPathPictureBox);
             this.Controls.Add(this.pixelPathPictureBox);
             this.Controls.Add(this.processButton);
@@ -116,6 +133,8 @@ namespace SeamCarving.Client.WinForms
         private System.Windows.Forms.Button processButton;
         private System.Windows.Forms.PictureBox pixelPathPictureBox;
         private System.Windows.Forms.PictureBox shortestPathPictureBox;
+        private System.Windows.Forms.OpenFileDialog openSourceFileDialog;
+        private System.Windows.Forms.Button uploadSourceButton;
     }
 }
 

@@ -88,5 +88,16 @@ namespace SeamCarving.Client.WinForms
             pixelPathPictureBox.Image.Dispose();
             shortestPathPictureBox.Image.Dispose();
         }
+
+        private void UploadSourceButton_Click(object sender, EventArgs e)
+        {
+            if (openSourceFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string selectedFile = openSourceFileDialog.FileName;
+
+                sourcePictureBox.Image.Dispose();
+                sourcePictureBox.Image = Image.FromFile(selectedFile);
+            }
+        }
     }
 }
