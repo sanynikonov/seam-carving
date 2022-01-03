@@ -10,8 +10,8 @@ namespace SeamCarving.Client.Cli
     class Program
     {
         private const string FullPath = @"C:\Users\nikon\Desktop\Test";
-        private const string Folder = "Yarik";
-        private const string Picture = "Yarik.jpg";
+        private const string Folder = "Me";
+        private const string Picture = "Me.png";
 
         static void Main(string[] args)
         {
@@ -20,34 +20,36 @@ namespace SeamCarving.Client.Cli
             IProcessorBuilder builder = new ProcessorBuilder();
 
             using var file = Image.FromFile(Path.Combine(FullPath, Picture));
-            var bitmap = new Bitmap(file, new Size(450, 450));
+            var bitmap = new Bitmap(file);
             var source = BitmapConverter.ToColorsMatrix(bitmap);
             bitmap.Dispose();
 
-            var picturesWidth = 300;
-            var picturesHeight = 300;
+            var picturesWidth = source.Width() - pictures / 2;
+            var picturesHeight = source.Height() - pictures / 2;
 
             var horizontalenergyProcessor = builder
                 .SetDefaultHorizontalConveyor()
-                .SetJpegImageSaver(picturesWidth, picturesHeight)
+                //.SetJpegImageSaver(picturesWidth, picturesHeight)
                 .Build();
 
             builder.Reset();
 
             var energyProcessor = builder
                  .SetDefaultVerticalConveyor()
-                 .SetJpegImageSaver(picturesWidth, picturesHeight)
+                 //.SetJpegImageSaver(picturesWidth, picturesHeight)
                  .Build();
 
             ProcessingContext context;
             string filename;
             string fileDestination;
 
+            using var gifWriter = new GifWriter(Path.Combine(FullPath, $"{Picture}.gif"), DefaultFrameDelay: 25, Repeat: 0);
+
             var startTime = DateTime.Now;
 
             for (int i = 0; i < pictures; i++)
             {
-                filename = $"{i}.jpg";
+                filename = $"{i}";
                 fileDestination = Path.Combine(FullPath, Folder, filename);
 
                 context = new ProcessingContext { Source = source, DestinationFileName = fileDestination };
@@ -63,7 +65,11 @@ namespace SeamCarving.Client.Cli
 
                 source = context.Result;
 
-                Console.WriteLine($"{filename} was succesfully saved.");
+                using var resultBitmap = BitmapConverter.FromColorsMatrix(context.Result);
+                using var finalBitmap = new Bitmap(resultBitmap, new Size(picturesWidth, picturesHeight));
+                gifWriter.WriteFrame(finalBitmap);
+
+                Console.WriteLine($"{filename} frame was succesfully saved.");
             }
 
             var endTime = DateTime.Now;
